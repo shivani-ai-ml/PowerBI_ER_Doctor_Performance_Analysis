@@ -2,166 +2,193 @@
 
 ## 📘 Project Overview
 
-This project, **ER Patient Flow & Doctor Performance Dashboard**, is an end-to-end Power BI analytics solution designed to analyze **Emergency Room (ER) performance** and **Doctor efficiency** within a healthcare environment.
+The **ER Patient Flow & Doctor Performance Dashboard** is a Power BI project built using two datasets — `Hospital ER.csv` and `Doctor_Patients_data.xlsx`. It provides a comprehensive analytical overview of **Emergency Room operations** and **Doctor performance**, empowering healthcare administrators to make data-driven decisions about patient management, wait time efficiency, and revenue performance.
 
-The dashboard integrates patient and doctor datasets to provide a unified, interactive visualization platform. It helps administrators and decision-makers monitor **patient wait times**, **departmental efficiency**, **doctor revenue performance**, and **overall ER operations** in real time.
+This documentation details every phase of the project — from data cleaning and modeling to DAX creation, visualization, and validation — offering a complete end-to-end Power BI workflow reference.
 
 ---
 
 ## 🎯 Project Objectives
 
-* Analyze **ER patient visits** and traffic by department.
-* Track and improve **average patient wait times**.
-* Measure **doctor revenue** and **patients served**.
-* Evaluate **wait time success percentage** as a key performance metric.
-* Deliver an **interactive Power BI dashboard** with slicers, KPIs, and visuals.
+* Analyze ER patient flow and department-level performance.
+* Track average waiting times and identify efficiency gaps.
+* Measure doctor revenue and patient load for performance benchmarking.
+* Evaluate hospital-wide wait time success rate (≤30 minutes).
+* Deliver an interactive Power BI dashboard that supports filtering by department and doctor.
 
 ---
 
-## 🗂️ Files Used in This Project
+## 🗂️ Files Used
 
-| File Name                                 | Description                                                                   |
-| ----------------------------------------- | ----------------------------------------------------------------------------- |
-| `Hospital ER.csv`                         | Contains ER patient data including department, wait times, and gender.        |
-| `Doctor_Patients_data.xlsx`               | Contains doctor data with patient IDs, department referrals, and doctor fees. |
-| `ER_Doctor_Performance_Dashboard.pbix` | Main Power BI dashboard file combining both datasets.                         |
-| `ER_Doctor_Performance_Dashboard-2.pdf`   | Exported PDF version of the Power BI dashboard for portfolio viewing.         |
-
-All these files are available in the repository: **PowerBI_ER_Doctor_Performance_Analysis**.
+| File Name                                 | Description                                                                                                  |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `Hospital ER.csv`                         | Contains ER visit-level details including patient ID, wait time (mins), gender, and department referral.     |
+| `Doctor_Patients_data.xlsx`               | Contains doctor and patient mapping details, including doctor fees, patient IDs, and department information. |
+| `AR_ER_Doctor_Performance_Dashboard.pbix` | Main Power BI file containing the data model, measures, and visuals.                                         |
+| `ER_Doctor_Performance_Dashboard-2.pdf`   | Exported static version of the final dashboard for quick reference or portfolio display.                     |
 
 ---
 
 ## 🧩 Data Model: Star Schema Design
 
-The dashboard follows a **Star Schema Model** for performance optimization and clarity.
+The dashboard is structured around a **Star Schema** model for optimized querying and scalability.
 
-### **Tables:**
+### Tables
 
-1. **ER_Data (Fact Table)** – Patient ER visit details and wait times.
-2. **Doctor_Data (Fact Table)** – Doctor performance and patient-level data.
-3. **Dim_Department (Dimension Table)** – Contains unique department names for model linkage.
+* **ER_Data (Fact Table):** Contains patient-level ER data.
+* **Doctor_Data (Fact Table):** Contains doctor and consultation-level data.
+* **Dim_Department (Dimension Table):** Centralized reference of department names.
 
-### **Relationships:**
+### Relationships
 
 * `Dim_Department[department_referral]` → `ER_Data[department_referral]` (1:Many)
 * `Dim_Department[department_referral]` → `Doctor_Data[department_referral]` (1:Many)
 
 ---
 
-## ⚙️ Data Cleaning and ETL Process
+## ⚙️ Data Cleaning and ETL Steps
 
-All data transformations were performed in **Power Query Editor** in Power BI.
+All transformations were performed in **Power Query Editor**.
 
-### **Steps Followed:**
+1. **Load Data:** Imported both CSV and Excel sources into Power BI.
+2. **Ensure Correct Data Types:** Converted numeric and text fields appropriately (e.g., `Wait Time (Mins)` as Number, `Doctor Fee` as Decimal).
+3. **Department Name Standardization:**
 
-1. **Import Datasets:** Loaded both `Hospital ER.csv` and `Doctor_Patients_data.xlsx` into Power BI.
-2. **Column Formatting:** Defined appropriate data types for numerical, text, and datetime fields.
-3. **Standardized Department Names:**
-
-   * Issue: Inconsistent naming caused slicers to show blanks.
-   * Fix: Applied transformations — `Clean`, `Trim`, and `Capitalize Each Word`.
-4. **Created Dimension Table:**
+   * Applied `Transform → Format → Clean` to remove hidden characters.
+   * Applied `Transform → Format → Trim` to remove trailing spaces.
+   * Applied `Transform → Format → Capitalize Each Word` for consistency.
+4. **Created Department Dimension Table:**
 
    ```DAX
    Dim_Department = DISTINCT('Doctor_Data'[department_referral])
    ```
-5. **Established Relationships:** Linked both fact tables with `Dim_Department`.
+5. **Established Relationships:** Connected the dimension to both fact tables via `department_referral`.
 
 ---
 
-## 🧮 DAX Measures and KPIs
+## 🧮 DAX Measures (Correct and Explained)
 
-### **ER_Data Table**
+### ER_Data Table
 
-| Measure                                                                                           | Formula                                                       | Description                           |
-| ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- | ------------------------------------- |
-| **Total ER Visits**                                                                               | `Total ER Visits = COUNT('ER_Data'[patient_id])`              | Total patient visits to the ER.       |
-| **Avg Wait Time (Mins)**                                                                          | `Avg Wait Time (Mins) = AVERAGE('ER_Data'[Wait Time (Mins)])` | Average waiting time for ER patients. |
-| **Wait Time Success %**                                                                           | ```DAX                                                        |                                       |
-| Wait Time Success % =                                                                             |                                                               |                                       |
-| VAR TotalVisits = COUNT('ER_Data'[patient_id])                                                    |                                                               |                                       |
-| VAR SuccessfulVisits = CALCULATE(COUNT('ER_Data'[patient_id]), 'ER_Data'[Wait Time (Mins)] <= 30) |                                                               |                                       |
-| RETURN DIVIDE(SuccessfulVisits, TotalVisits)                                                      |                                                               |                                       |
+**1. Total ER Visits**
+Counts total visit records.
 
-```| Percentage of ER cases where waiting time ≤ 30 minutes. |
+```DAX
+Total ER Visits = COUNTROWS('ER_Data')
+```
 
-### **Doctor_Data Table**
-| Measure | Formula | Description |
-|----------|----------|-------------|
-| **Total Doctor Revenue** | `Total Doctor Revenue = SUM('Doctor_Data'[Doctor Fee])` | Total revenue generated by all doctors. |
-| **Total Patients Served** | `Total Patients Served = DISTINCTCOUNT('Doctor_Data'[patient_id])` | Number of unique patients served per doctor. |
+**2. Avg Wait Time (Mins)**
+Calculates average waiting time per patient.
 
----
+```DAX
+Avg Wait Time (Mins) = AVERAGE('ER_Data'[Wait Time (Mins)])
+```
 
-## 📊 Dashboard Design & Visuals
-### **Dashboard Title:**  
-> *ER Patient & Doctor Performance Dashboard*
+**3. Wait Time Success %**
+Determines the percentage of ER visits with waiting time ≤ 30 minutes.
 
-### **Visual Elements:**
-| Component | Type | Description |
-|------------|------|-------------|
-| **Card 1** | KPI Card | Displays `Total ER Visits`. |
-| **Card 2** | KPI Card | Displays `Avg Wait Time (Mins)`. |
-| **Card 3** | KPI Card | Displays `Wait Time Success %`. |
-| **Card 4** | KPI Card | Displays `Total Doctor Revenue`. |
-| **Slicer 1** | Dropdown | Department selector (`department_referral`). |
-| **Slicer 2** | Dropdown | Doctor Name filter. |
-| **Chart 1** | Clustered Column Chart | `Total ER Visits` by `department_referral`. |
-| **Chart 2** | Donut Chart | `Total ER Visits` by `patient_gender`. |
-| **Table Visual** | Table | Displays `Doctor Name`, `Total Doctor Revenue`, `Total Patients Served`, and `Avg Wait Time (Mins)`. |
+```DAX
+Wait Time Success % =
+VAR TotalVisits = COUNTROWS('ER_Data')
+VAR SuccessfulVisits = CALCULATE(
+    COUNTROWS('ER_Data'),
+    'ER_Data'[Wait Time (Mins)] <= 30
+)
+RETURN
+DIVIDE(SuccessfulVisits, TotalVisits, 0)
+```
 
----
+### Doctor_Data Table
 
-## 🧠 Troubleshooting & Fixes
-| Issue | Root Cause | Resolution |
-|-------|-------------|-------------|
-| Red underline in DAX formula | Hidden spaces or mismatched column names | Copied exact column name from Data View. |
-| Slicer filtering only Orthopaedics | Hidden characters in department names | Used Power Query **Clean**, **Trim**, and **Capitalize**. |
-| GitHub upload error for PBIX | File exceeded upload limit | Used **GitHub Desktop** to commit and push the file. |
+**4. Total Doctor Revenue**
+Calculates overall revenue from all doctors.
+
+```DAX
+Total Doctor Revenue = SUM('Doctor_Data'[Doctor Fee])
+```
+
+**5. Total Patients Served**
+Counts the number of unique patients handled by each doctor.
+
+```DAX
+Total Patients Served = DISTINCTCOUNT('Doctor_Data'[patient_id])
+```
 
 ---
 
-## 💾 Deployment Instructions
-1. **Create a GitHub Repository:** `PowerBI_ER_Doctor_Performance_Analysis`  
-2. **Upload Files:**  
-   - `AR_ER_Doctor_Performance_Dashboard.pbix`  
-   - `Hospital ER.csv`  
-   - `Doctor_Patients_data.xlsx`  
-   - `ER_Doctor_Performance_Dashboard-2.pdf`  
-   - `README.md` (this file)
-3. **For Large PBIX Files (>25MB):**  
-   - Use **GitHub Desktop** → Clone Repo → Copy `.pbix` → Commit & Push.
+## ✅ Step-by-Step: Creating DAX Measures in Power BI
+
+1. Go to **Report View** (chart icon on the left pane).
+2. In the **Fields** panel, right-click the target table (ER_Data or Doctor_Data) → **New Measure**.
+3. Paste the desired DAX formula.
+4. Press **Enter**.
+5. Format the measure using **Measure Tools** (Percentage, Currency, or Decimal).
+6. If an error appears under column names, copy the exact field name from **Data View** and replace it in the DAX formula.
 
 ---
 
-## 🏗️ Tools & Technologies
-- **Power BI Desktop**  
-- **Power Query Editor**  
-- **DAX (Data Analysis Expressions)**  
-- **Excel / CSV Data Sources**  
+## 📊 Dashboard Layout
+
+### Dashboard Title
+
+> **ER Patient & Doctor Performance Dashboard**
+
+### Visual Components
+
+| Element      | Type                   | Description                                                                                      |
+| ------------ | ---------------------- | ------------------------------------------------------------------------------------------------ |
+| **Card 1**   | KPI Card               | Displays `Total ER Visits`.                                                                      |
+| **Card 2**   | KPI Card               | Displays `Avg Wait Time (Mins)`.                                                                 |
+| **Card 3**   | KPI Card               | Displays `Wait Time Success %`.                                                                  |
+| **Card 4**   | KPI Card               | Displays `Total Doctor Revenue`.                                                                 |
+| **Slicer 1** | Dropdown               | Department filter (`department_referral`).                                                       |
+| **Slicer 2** | Dropdown               | Doctor name filter.                                                                              |
+| **Chart 1**  | Clustered Column Chart | `Total ER Visits` by `department_referral`.                                                      |
+| **Chart 2**  | Donut Chart            | `Total ER Visits` by `patient_gender`.                                                           |
+| **Table**    | Table Visual           | Columns: `Doctor Name`, `Total Doctor Revenue`, `Total Patients Served`, `Avg Wait Time (Mins)`. |
 
 ---
 
-## 📈 Key Insights
-- Orthopaedics department had the **highest ER visits**.  
-- The **average wait time** was reduced significantly after cleaning inconsistent data.  
-- **Doctor revenue** strongly correlated with patient throughput.  
-- The **Wait Time Success %** metric effectively identified top-performing departments.
+## 🖼️ Dashboard Screenshots (Add Here)
+
+To make the README visually engaging, add screenshots of your Power BI report here. Create a `screenshots` folder in your repository and link them as shown:
+
+```markdown
+### Dashboard Preview
+![Dashboard Overview](/Users/shivanichaudhary/Desktop/ER_Patient_Doctor_PerformanceDashboard.png)
+
+### ER Visits by Department
+![ER Visits by Department](screenshots/er_by_department.png)
+
+### Doctor Performance Table
+![Doctor Performance](screenshots/doctor_performance.png)
+```
 
 ---
+
+## 🔍 Troubleshooting & Fixes
+
+| Problem                               | Cause                                   | Solution                                                                |
+| ------------------------------------- | --------------------------------------- | ----------------------------------------------------------------------- |
+| Only one department visible in slicer | Hidden characters or inconsistent names | Apply **Clean**, **Trim**, and **Capitalize Each Word** in Power Query. |
+| Red underline in DAX                  | Incorrect column name                   | Copy the exact column name from Data View and replace it.               |
+| Dashboard blank visuals               | Relationship issue                      | Ensure the `Dim_Department` relationships are active (1:Many).          |
+
+---
+
 
 ## 🧾 Summary
-This Power BI project demonstrates end-to-end **data modeling**, **ETL**, **DAX measure creation**, and **dashboard development** following industry best practices. It showcases:
-- Mastery of Power BI reporting and interactivity.  
-- Strong analytical and visualization skills.  
-- Proficiency in data relationships, KPIs, and performance metrics.  
+
+This Power BI project demonstrates the full analytical lifecycle — data preparation, model design, DAX creation, visualization, validation, and optimization — all derived directly from the provided CSV and Excel datasets.
+
+The **ER Patient Flow & Doctor Performance Dashboard** delivers a robust view of hospital performance, showcasing Power BI’s capabilities in transforming raw operational data into actionable insights.
 
 ---
 
 ## 👨‍💻 Author
-**AR**  
-Power BI Developer | Data Analyst  
-📍 Project: *ER Patient Flow & Doctor Performance Dashboard*  
-💼 Repository: [PowerBI_ER_Doctor_Performance_Analysis](#)
 
-```
+**AR**
+Power BI Developer | Data Analyst
+Project: *ER Patient Flow & Doctor Performance Dashboard*
+
+---
