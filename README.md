@@ -1,4 +1,5 @@
 # 🏥 ER Patient Flow & Doctor Performance Dashboard
+![Dashboard Overview](ER_Patient_Doctor_PerformanceDashboard.png)
 
 ## 📘 Project Overview
 
@@ -149,7 +150,7 @@ Total Patients Served = DISTINCTCOUNT('Doctor_Data'[patient_id])
 
 ---
 
-![Dashboard Overview](ER_Patient_Doctor_PerformanceDashboard.png)
+
 
 ## 🧾 Summary
 
