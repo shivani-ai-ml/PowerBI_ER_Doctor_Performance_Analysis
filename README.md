@@ -1,7 +1,7 @@
 # 🏥 ER Patient Flow & Doctor Performance Dashboard
-![Dashboard Overview](ER_Patient_Doctor_PerformanceDashboard.png)
 
 ## 📘 Project Overview
+![Dashboard Overview](ER_Patient_Doctor_PerformanceDashboard.png)
 
 The **ER Patient Flow & Doctor Performance Dashboard** is a Power BI project built using two datasets — `Hospital ER.csv` and `Doctor_Patients_data.xlsx`. It provides a comprehensive analytical overview of **Emergency Room operations** and **Doctor performance**, empowering healthcare administrators to make data-driven decisions about patient management, wait time efficiency, and revenue performance.
 
