@@ -149,7 +149,7 @@ Total Patients Served = DISTINCTCOUNT('Doctor_Data'[patient_id])
 
 ---
 
-![Dashboard Overview](/PowerBI_ER_Doctor_Performance_Analysis/ER_Patient_Doctor_PerformanceDashboard.png)
+![Dashboard Overview](ER_Patient_Doctor_PerformanceDashboard.png)
 
 ## 🧾 Summary
 
