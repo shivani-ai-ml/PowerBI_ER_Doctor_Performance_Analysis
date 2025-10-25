@@ -1,5 +1,3 @@
-# 🏥 ER Patient Flow & Doctor Performance Dashboard
-
 ## 📘 Project Overview
 ![Dashboard Overview](ER_Patient_Doctor_PerformanceDashboard.png)
 
