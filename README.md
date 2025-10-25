@@ -155,7 +155,7 @@ To make the README visually engaging, add screenshots of your Power BI report he
 
 ```markdown
 ### Dashboard Preview
-![Dashboard Overview](/Users/shivanichaudhary/Desktop/ER_Patient_Doctor_PerformanceDashboard.png)
+![Dashboard Overview](https://github.com/Users/shivanichaudhary/Desktop/ER_Patient_Doctor_PerformanceDashboard.png)
 
 ### ER Visits by Department
 ![ER Visits by Department](screenshots/er_by_department.png)
