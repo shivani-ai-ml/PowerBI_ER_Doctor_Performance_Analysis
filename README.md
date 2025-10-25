@@ -149,32 +149,6 @@ Total Patients Served = DISTINCTCOUNT('Doctor_Data'[patient_id])
 
 ---
 
-## 🖼️ Dashboard Screenshots (Add Here)
-
-To make the README visually engaging, add screenshots of your Power BI report here. Create a `screenshots` folder in your repository and link them as shown:
-
-```markdown
-### Dashboard Preview
-![Dashboard Overview](https://github.com/shivani-ai-ml/PowerBI_ER_Doctor_Performance_Analysis/blob/main/ER_Patient_Doctor_PerformanceDashboard.png)
-
-### ER Visits by Department
-![ER Visits by Department](screenshots/er_by_department.png)
-
-### Doctor Performance Table
-![Doctor Performance](screenshots/doctor_performance.png)
-```
-
----
-
-## 🔍 Troubleshooting & Fixes
-
-| Problem                               | Cause                                   | Solution                                                                |
-| ------------------------------------- | --------------------------------------- | ----------------------------------------------------------------------- |
-| Only one department visible in slicer | Hidden characters or inconsistent names | Apply **Clean**, **Trim**, and **Capitalize Each Word** in Power Query. |
-| Red underline in DAX                  | Incorrect column name                   | Copy the exact column name from Data View and replace it.               |
-| Dashboard blank visuals               | Relationship issue                      | Ensure the `Dim_Department` relationships are active (1:Many).          |
-
----
 
 
 ## 🧾 Summary
@@ -185,10 +159,3 @@ The **ER Patient Flow & Doctor Performance Dashboard** delivers a robust view of
 
 ---
 
-## 👨‍💻 Author
-
-**AR**
-Power BI Developer | Data Analyst
-Project: *ER Patient Flow & Doctor Performance Dashboard*
-
----
